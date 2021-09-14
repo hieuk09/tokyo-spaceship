@@ -37,24 +37,21 @@ class World
   end
 
   def players_colliding(within: 1)
-    @players.map do |_id, player|
-      if player.id != current_player_id
-        [player, player.colliding(current_player, within: within)]
-      else
-        [player, nil]
+    @players.map { |_id, player| player }
+      .select do |player|
+        player.id != current_player_id && player.colliding?(current_player, within: within)
       end
-    end.select { |player, time| !!time }
   end
 
   def current_player
     @players[current_player_id]
   end
 
-  def nearest_player
+  def nearest_player(other_players = @players.values)
     nearest_player = nil
     min_distance = 1_000_000
 
-    @players.find do |_id, player|
+    other_players.find do |player|
       if player.id != current_player_id
         distance = player.distance(current_player)
 

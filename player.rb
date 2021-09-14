@@ -20,21 +20,25 @@ class Player
     @position + @velocity * in_seconds
   end
 
-  def colliding(other_player, within: 1)
-    new_player_position = move(within)
-    new_other_position = other_player.move(within)
+  def colliding?(other_player, within: 1)
+    (0..(within * 100)).any? do |i|
+      new_player_position = move(i / 100.0)
+      new_other_position = other_player.move(i / 100.0)
 
-    return 1 if new_player_position.colliding?(new_other_position, radius: RADIUS)
-    intersect(new_player_position, new_other_position, other_player, within: within)
+      new_other_position.colliding?(new_player_position, radius: RADIUS)
+    end
   end
 
   def dodge(bullets)
-    bullet = bullets.first
-    bullet.angle + Math::PI / 2
+    bullets.inject(Velocity.new(0.0, 0.0)) do |sum, bullet|
+      sum + bullet.velocity
+    end.angle + Math::PI / 2
   end
 
-  def dodge_players(player)
-    player.angle + Math::PI / 2
+  def dodge_players(players)
+    players.inject(Velocity.new(0.0, 0.0)) do |sum, player|
+      sum + player.velocity
+    end.angle + Math::PI / 2
   end
 
   def distance(player)
@@ -58,33 +62,5 @@ class Player
 
   def out_of_bullet?(world)
     world.bullets.count { |bullet| bullet.player_id == id } == 5
-  end
-
-  private
-
-  def intersect(new_player_position, new_other_position, other_player, within:)
-    a1 = new_player_position.x - position.x
-    b1 = new_player_position.y - position.y
-    c1 = a1 * position.x + b1 * position.y
-
-    a2 = new_other_position.x - other_player.position.x
-    b2 = new_other_position.y - other_player.position.y
-    c2 = a2 * other_player.position.x + b2 * other_player.position.y
-
-    det = a1.to_f * b2 - a2 * b1
-
-    return nil if det == 0
-
-    intersection_point = Point.new(
-      (b2 * c1 - b1 * c2) / det,
-      (a1 * c2 - a2 * c1) / det
-    )
-    player_distance = intersection_point.distance(position)
-    other_distance = intersection_point.distance(other_player.position)
-
-    other_time = other_distance / other_player.velocity.speed
-    player_time = player_distance / velocity.speed
-
-    player_time if other_time == player_time && player_time <= within
   end
 end

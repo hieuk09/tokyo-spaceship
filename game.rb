@@ -27,39 +27,31 @@ class Game
     elsif (bullets = world.bullets_colliding(within: 2)).any?
       world.commands.push(Dodge.new(world, bullets))
 
-    elsif (players_with_time = world.players_colliding(within: 1)).any?
-      nearest, time_to_colliding = players_with_time.sort { |_, time| -time }.first
+    elsif (players = world.players_colliding(within: 1)).any?
+      nearest_player = world.nearest_player(players)
 
-      if nearest.out_of_bullet?(world)
-        shoot(world, nearest)
+      if nearest_player.out_of_bullet?(world)
+        shoot(world, nearest_player)
       end
 
-      angle = world.current_player.dodge_players(nearest)
+      angle = world.current_player.dodge_players(players)
       run(world, angle, 1, duration: 2)
 
-    else
-      nearest_player = world.nearest_player
+    elsif nearest_player = world.nearest_player
+      current_player = world.current_player
+      distance = current_player.distance(nearest_player)
 
-      if nearest_player
-        current_player = world.current_player
-        distance = current_player.distance(nearest_player)
-
-        if distance > 300
-          angle = current_player.chase(nearest_player)
-          run(world, angle, 1, duration: 1)
-        elsif distance < 100
-          if nearest_player.out_of_bullet?(world)
-            shoot(world, nearest)
-          else
-            angle = world.current_player.dodge_players(nearest_player)
-            run(world, angle, 1, duration: 2)
-          end
-        else
-          shoot(world, nearest_player)
-        end
+      if distance > 300
+        angle = current_player.chase(nearest_player)
+        run(world, angle, 1, duration: 1)
+      elsif distance < 100 && !nearest_player.out_of_bullet?(world)
+        angle = current_player.dodge_players([nearest_player])
+        run(world, angle, 1, duration: 2)
       else
-        rotate(world, nil)
+        shoot(world, nearest_player)
       end
+    else
+      rotate(world, nil)
     end
 
     command = world.commands.shift
