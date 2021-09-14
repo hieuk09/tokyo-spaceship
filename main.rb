@@ -3,6 +3,7 @@ require 'bundler/setup'
 require 'websocket-eventmachine-client'
 require 'oj'
 require 'securerandom'
+require 'logger'
 
 require_relative 'command'
 require_relative 'game'
@@ -21,12 +22,15 @@ EM.run do
 
   ws.onopen do
     puts "Connected"
+    @logger = Logger.new('development.log')
   end
 
   ws.onmessage do |data, type|
     data = Oj.load(data)
+    @logger.info(data)
     @world = Game.update(@world, data)
     action = Game.decide(@world)
+    @logger.info(action.data)
     ws.send(Oj.dump(action.data))
   end
 
