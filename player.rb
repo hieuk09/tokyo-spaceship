@@ -29,15 +29,9 @@ class Player
     end
   end
 
-  def dodge(bullets)
-    bullets.inject(Velocity.new(0.0, 0.0)) do |sum, bullet|
-      sum + bullet.velocity
-    end.angle + Math::PI / 2
-  end
-
-  def dodge_players(players)
-    players.inject(Velocity.new(0.0, 0.0)) do |sum, player|
-      sum + player.velocity
+  def dodge_entity(entities)
+    entities.inject(Velocity.new(0.0, 0.0)) do |sum, entity|
+      sum + entity.velocity
     end.angle + Math::PI / 2
   end
 

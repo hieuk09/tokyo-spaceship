@@ -43,6 +43,21 @@ class World
       end
   end
 
+  def nearest_entity(entities)
+    near_entity = entities.first
+    min_distance = current_player.distance(near_entity)
+
+    entities.each do |entity|
+      distance = current_player.distance(entity)
+      if distance < min_distance
+        min_distance = distance
+        near_entity = entity
+      end
+    end
+
+    near_entity
+  end
+
   def current_player
     @players[current_player_id]
   end
@@ -51,7 +66,7 @@ class World
     nearest_player = nil
     min_distance = 1_000_000
 
-    other_players.find do |player|
+    other_players.each do |player|
       if player.id != current_player_id
         distance = player.distance(current_player)
 
