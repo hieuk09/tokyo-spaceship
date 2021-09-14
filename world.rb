@@ -4,7 +4,7 @@ class World
   STATE = 'state'
 
   attr_accessor :current_player_id, :event
-  attr_reader :commands
+  attr_reader :commands, :bullets
 
   def initialize
     @commands = []

@@ -56,6 +56,10 @@ class Player
     end
   end
 
+  def out_of_bullet?(world)
+    world.bullets.count { |bullet| bullet.player_id == id } == 5
+  end
+
   private
 
   def intersect(new_player_position, new_other_position, other_player, within:)

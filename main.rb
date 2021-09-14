@@ -14,6 +14,7 @@ require_relative 'velocity'
 require_relative 'world'
 
 URL = 'ws://localhost:8091/socket?key=hieuk091234&name=hieuk09'
+#URL = 'ws://tokyo.thuc.space/socket?key=ruby-12345&name=ruby_1'
 
 EM.run do
   ws = WebSocket::EventMachine::Client.connect(uri: URL)

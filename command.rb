@@ -39,7 +39,7 @@ class Noop < Command
 end
 
 class Dodge < Command
-  RUN_DURATION = 5
+  RUN_DURATION = 2
 
   def initialize(world, bullets)
     @current_player = world.current_player

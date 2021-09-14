@@ -22,21 +22,20 @@ class Game
     if world.preparing? || world.dead?
       noop(world)
     elsif world.commands.any?
-      command = world.commands.first
-      world.commands.concat(command.next) if command.next
+      # do nothing
 
-    elsif (bullets = world.bullets_colliding(within: 1)).any?
+    elsif (bullets = world.bullets_colliding(within: 2)).any?
       world.commands.push(Dodge.new(world, bullets))
 
     elsif (players_with_time = world.players_colliding(within: 1)).any?
       nearest, time_to_colliding = players_with_time.sort { |_, time| -time }.first
 
-      if SecureRandom.rand < (time_to_colliding - 0.5) / 2
+      if nearest.out_of_bullet?(world)
         shoot(world, nearest)
       end
 
       angle = world.current_player.dodge_players(nearest)
-      run(world, angle, 1, duration: 5)
+      run(world, angle, 1, duration: 2)
 
     else
       nearest_player = world.nearest_player
@@ -49,7 +48,12 @@ class Game
           angle = current_player.chase(nearest_player)
           run(world, angle, 1, duration: 1)
         elsif distance < 100
-          world.commands.push(Run.new(throttle: 0))
+          if nearest_player.out_of_bullet?(world)
+            shoot(world, nearest)
+          else
+            angle = world.current_player.dodge_players(nearest_player)
+            run(world, angle, 1, duration: 2)
+          end
         else
           shoot(world, nearest_player)
         end
@@ -57,7 +61,10 @@ class Game
         rotate(world, nil)
       end
     end
-    world.commands.shift
+
+    command = world.commands.shift
+    world.commands.concat(command.next) if command.next
+    command
   end
 
   def self.shoot(world, nearest_player)

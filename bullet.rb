@@ -2,7 +2,7 @@ class Bullet
   RADIUS = 2.0
   SPEED = 600.0
 
-  attr_reader :position, :velocity
+  attr_reader :position, :velocity, :player_id
 
   def initialize(data)
     @position = Point.new(data['x'], data['y'])
@@ -52,6 +52,11 @@ class Bullet
     bullet_time = bullet_distance / SPEED
     player_time = player_distance / player.velocity.speed
 
-    bullet_time == player_time && player_time <= within
+    # we don't compare bullet_time and player_time
+    # because it's rarely equal, thus create too many false negatives
+    #
+    # technically, this is incorrect, but intersection calculation is flawed
+    # when bullet and player is near
+    player_time <= within || bullet_time <= within
   end
 end
