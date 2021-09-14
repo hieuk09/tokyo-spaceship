@@ -26,7 +26,7 @@ class Game
 
     else
       colliding_bullets = world.bullets_colliding(within: 2)
-      colliding_players = world.players_colliding(within: 1)
+      colliding_players = world.players_colliding(within: 2)
       colliding_entities = colliding_players + colliding_bullets
       current_player = world.current_player
 
@@ -39,8 +39,12 @@ class Game
         if current_player.out_of_bullet?(world)
           duration = 2
         elsif colliding_players.any? && nearest_player = world.nearest_entity(colliding_players)
-          if nearest_player.out_of_bullet?(world)
-            shoot(world, nearest_player)
+          remaining_bullet = current_player.remaining_bullet(world)
+
+          if nearest_player.out_of_bullet?(world) && remaining_bullet > 0
+            shoot(world, nearest_player, count: [2, remaining_bullet].min)
+          else
+            duration = 2
           end
         end
 
@@ -55,7 +59,8 @@ class Game
           angle = current_player.dodge_entity([nearest_player])
           run(world, angle, 1, duration: 2)
         else
-          shoot(world, nearest_player)
+          remaining_bullet = current_player.remaining_bullet(world)
+          shoot(world, nearest_player, count: [remaining_bullet, 2].min)
         end
       else
         rotate(world, nil)
@@ -67,14 +72,14 @@ class Game
     command
   end
 
-  def self.shoot(world, nearest_player)
+  def self.shoot(world, nearest_player, count: 1)
     angle = world.current_player.chase(nearest_player)
 
     if angle != world.current_player.angle && valid_angle?(angle)
       world.commands.push(Rotate.new(angle: angle))
     end
 
-    world.commands.push(Shoot.new)
+    world.commands.concat([Shoot.new] * count)
   end
 
   def self.rotate(world, angle)

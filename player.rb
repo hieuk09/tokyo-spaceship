@@ -4,6 +4,7 @@ require_relative 'velocity'
 class Player
   BASE_SPEED = 300.0
   RADIUS = 10.0
+  MAX_CONCURRENT_BULLET = 5
 
   attr_reader :angle, :throttle, :position, :velocity, :id, :player_name
 
@@ -55,6 +56,10 @@ class Player
   end
 
   def out_of_bullet?(world)
-    world.bullets.count { |bullet| bullet.player_id == id } == 5
+    remaining_bullet(world) == 0
+  end
+
+  def remaining_bullet(world)
+    MAX_CONCURRENT_BULLET - world.bullets.count { |bullet| bullet.player_id == id }
   end
 end
