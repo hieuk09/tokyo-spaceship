@@ -44,7 +44,7 @@ class Game
       if distance > 300
         angle = current_player.chase(nearest_player)
         run(world, angle, 1, duration: 1)
-      elsif distance < 100 && !nearest_player.out_of_bullet?(world)
+      elsif distance < 100 && (!nearest_player.out_of_bullet?(world) || current_player.out_of_bullet?(world))
         angle = current_player.dodge_players([nearest_player])
         run(world, angle, 1, duration: 2)
       else
