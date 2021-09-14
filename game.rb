@@ -29,14 +29,14 @@ class Game
       world.commands.push(Dodge.new(world, bullets))
 
     elsif (players_with_time = world.players_colliding(within: 1)).any?
-      nearest, time_to_colliding = players_with_time.sort { |_, time| -time }
+      nearest, time_to_colliding = players_with_time.sort { |_, time| -time }.first
 
-      if SecureRandom.rand < (time_to_colliding - 1.0) / 2
+      if SecureRandom.rand < (time_to_colliding - 0.5) / 2
         shoot(world, nearest)
       end
 
-      angle = world.current_player.dodge_players(players_with_time)
-      run(world, angle, 1)
+      angle = world.current_player.dodge_players(nearest)
+      run(world, angle, 1, duration: 5)
 
     else
       nearest_player = world.nearest_player
@@ -47,12 +47,14 @@ class Game
 
         if distance > 300
           angle = current_player.chase(nearest_player)
-          run(world, angle, 1)
+          run(world, angle, 1, duration: 1)
+        elsif distance < 100
+          world.commands.push(Run.new(throttle: 0))
         else
           shoot(world, nearest_player)
         end
       else
-        noop(world)
+        rotate(world, nil)
       end
     end
     world.commands.shift
@@ -61,26 +63,29 @@ class Game
   def self.shoot(world, nearest_player)
     angle = world.current_player.chase(nearest_player)
 
-    rotate(world, angle)
+    if angle != world.current_player.angle && valid_angle?(angle)
+      world.commands.push(Rotate.new(angle: angle))
+    end
+
     world.commands.push(Shoot.new)
   end
 
   def self.rotate(world, angle)
     if valid_angle?(angle) && angle != world.current_player.angle
       world.commands.push(Rotate.new(angle: angle))
+    else
+      world.commands.push(Rotate.new(angle: world.current_player.angle))
     end
   end
 
-  def self.run(world, angle, throttle)
+  def self.run(world, angle, throttle, duration:)
     if valid_angle?(angle)
       world.commands.push(Rotate.new(angle: angle))
     else
       world.commands.push(Rotate.new(angle: world.current_player.angle))
     end
 
-    if world.current_player.throttle != throttle
-      world.commands.concat([Run.new(throttle: throttle)] * 10)
-    end
+    world.commands.concat([Run.new(throttle: throttle)] * duration)
   end
 
   def self.noop(world)

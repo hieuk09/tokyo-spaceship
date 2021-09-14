@@ -39,6 +39,8 @@ class Noop < Command
 end
 
 class Dodge < Command
+  RUN_DURATION = 5
+
   def initialize(world, bullets)
     @current_player = world.current_player
     @bullets = bullets
@@ -46,17 +48,10 @@ class Dodge < Command
 
   def data
     angle = @current_player.dodge(@bullets)
-
-    command = if angle.nil? || angle == Float::NAN
-                Rotate.new(angle: @current_player.angle)
-              else
-                Rotate.new(angle: angle)
-              end
-
-    command.data
+    Rotate.new(angle: angle).data
   end
 
   def next
-    [Run.new(throttle: throttle)] * 10
+    [Run.new(throttle: 1)] * RUN_DURATION
   end
 end

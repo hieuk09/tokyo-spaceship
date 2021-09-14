@@ -1,3 +1,6 @@
+require_relative 'point'
+require_relative 'velocity'
+
 class Player
   BASE_SPEED = 300.0
   RADIUS = 10.0
@@ -26,34 +29,12 @@ class Player
   end
 
   def dodge(bullets)
-    if bullets.count == 1
-      bullet = bullets.first
-      new_angle = bullet.angle + Math::PI / 2
-
-      if new_angle > 2 * Math::PI
-        new_angle - 2*Math::PI
-      else
-        new_angle
-      end
-    else
-      bullet.map(&:velocity).sum.angle
-    end
+    bullet = bullets.first
+    bullet.angle + Math::PI / 2
   end
 
-  def dodge_players(players_with_time)
-    if players_with_time.count == 1
-      player, _ = players_with_time.first
-
-      new_angle = player.angle + Math::PI / 2
-
-      if new_angle > 2 * Math::PI
-        new_angle - 2*Math::PI
-      else
-        new_angle
-      end
-    else
-      players_with_time.map { |player, _time| player.velocity }.sum.angle
-    end
+  def dodge_players(player)
+    player.angle + Math::PI / 2
   end
 
   def distance(player)
@@ -61,7 +42,18 @@ class Player
   end
 
   def chase(player)
-    (velocity + player.velocity).angle
+    new_x = player.position.x - position.x
+    new_y = player.position.y - position.y
+
+    if new_x == 0
+      Math::PI + Math.atan(new_y / new_x)
+    elsif new_x < 0
+      Math::PI + Math.atan(new_y / new_x)
+    elsif new_x > 0 && new_y < 0
+      2 * Math::PI + Math.atan(new_y / new_x)
+    else
+      Math.atan(new_y / new_x)
+    end
   end
 
   private

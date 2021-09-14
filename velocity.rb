@@ -20,7 +20,7 @@ class Velocity
     when Velocity
       new_x = Math.cos(angle) * speed + Math.cos(entity.angle) * entity.speed
       new_y = Math.sin(angle) * speed + Math.sin(entity.angle) * entity.speed
-      new_angle = 1.0 / Math.tan(new_y / new_x)
+      new_angle = Math.atan(new_y / new_x)
       new_speed = Math.sqrt(new_x*new_x + new_y*new_y)
       Velocity.new(new_angle, new_speed)
     else

@@ -26,7 +26,6 @@ EM.run do
     data = Oj.load(data)
     @world = Game.update(@world, data)
     action = Game.decide(@world)
-    puts "#{action} #{action.data}"
     ws.send(Oj.dump(action.data))
   end
 
