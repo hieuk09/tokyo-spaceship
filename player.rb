@@ -4,7 +4,7 @@ require_relative 'velocity'
 class Player
   BASE_SPEED = 300.0
   RADIUS = 10.0
-  MAX_CONCURRENT_BULLET = 5
+  MAX_CONCURRENT_BULLET = 4
 
   attr_reader :angle, :throttle, :position, :velocity, :id, :player_name
 
