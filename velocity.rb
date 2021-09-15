@@ -1,3 +1,5 @@
+require_relative 'point'
+
 class Velocity
   attr_reader :angle, :speed
 
