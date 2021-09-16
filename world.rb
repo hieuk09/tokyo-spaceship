@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class World
   ID = 'id'
   TEAM = 'teamnames'
@@ -28,6 +30,7 @@ class World
     @size = Size.new(*data['bounds'])
     @players = parse_players(data['players'])
     @bullets = parse_bullets(data['bullets'])
+    @current_score = data['scoreboard'].fetch(current_player_id.to_s, 0)
   end
 
   def bullets_colliding(within: 1)
@@ -58,8 +61,19 @@ class World
     near_entity
   end
 
+  def nearby_players(within:)
+    @players.values.select do |player|
+      player.id != current_player_id &&
+        player.distance(current_player) <= within
+    end
+  end
+
   def current_player
     @players[current_player_id]
+  end
+
+  def current_score
+    @current_score || 0
   end
 
   def nearest_player(other_players = @players.values)

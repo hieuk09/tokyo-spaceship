@@ -34,6 +34,6 @@ end
 
 class Noop < Command
   def data
-    { "e" => "rotate", "data" => 0 }
+    { "e" => "throttle", "data" => 0 }
   end
 end

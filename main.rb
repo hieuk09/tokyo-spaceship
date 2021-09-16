@@ -19,25 +19,23 @@ URL = 'ws://localhost:8091/socket?key=hieuk091234&name=hieuk09'
 
 EM.run do
   ws = WebSocket::EventMachine::Client.connect(uri: URL)
+  logger = Logger.new('development.log')
+  game = Game.new(logger: logger)
 
   ws.onopen do
     puts "Connected"
-    @logger = Logger.new('development.log')
   end
 
   ws.onmessage do |data, type|
     data = Oj.load(data)
-    @logger.info(data)
-    @world = Game.update(@world, data)
-    action = Game.decide(@world)
-    @logger.info(action.data)
+    logger.info(data)
+    @world = game.update(@world, data)
+    action = game.decide(@world)
+    logger.info(action.data)
     ws.send(Oj.dump(action.data))
   end
 
   ws.onclose do |code, reason|
     puts "Disconnected with status code: #{code}"
-  end
-
-  EventMachine.next_tick do
   end
 end
