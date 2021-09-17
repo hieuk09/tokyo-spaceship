@@ -1,70 +1,12 @@
 require_relative 'player'
+require_relative 'population'
 
 class Game
-  INITIAL_POPULATION = {
-    {
-      considered_radius: 500.0,
-      shooting_radius: 200.0,
-      chasing_radius: 500.0,
-      bullet_dodging_radius: 200.0,
-      player_dodging_radius: 1848.3,
-      bullet_duration: 2,
-      player_duration: 2,
-      dodge_duration: 2,
-      bullet_count: 2,
-      chase_duration: 1,
-      weight_of_bullet_colliding: 10.0,
-      weight_of_player_colliding: 8.0,
-      weight_of_chance_to_shoot: 3.0,
-      weight_of_chance_to_chase: 1.0
-    } => 1,
-    {
-      considered_radius: 500.0,
-      shooting_radius: 200.0,
-      chasing_radius: 500.0,
-      bullet_dodging_radius: 200.0,
-      player_dodging_radius: 1849.7,
-      bullet_duration: 2,
-      player_duration: 2,
-      dodge_duration: 2,
-      bullet_count: 2,
-      chase_duration: 1,
-      weight_of_bullet_colliding: 10.0,
-      weight_of_player_colliding: 8.0,
-      weight_of_chance_to_shoot: 3.0,
-      weight_of_chance_to_chase: 1.0
-    } => 1
-  }
-  DISTANCE_TYPE = { type: Float, min: 100.0, max: 2000.0 }
-  DURATION_TYPE = { type: Integer, min: 1, max: 5 }
-  TICK_TYPE = { type: Integer, min: 1, max: 10 }
-  BULLET_TYPE = { type: Integer, min: 1, max: Player::MAX_CONCURRENT_BULLET }
-  WEIGHT_TYPE = { type: Float, min: 0.0, max: 100.0 }
-  KEY_TYPE = {
-    considered_radius: DISTANCE_TYPE,
-    shooting_radius: DISTANCE_TYPE,
-    chasing_radius: DISTANCE_TYPE,
-    bullet_dodging_radius: DISTANCE_TYPE,
-    player_dodging_radius: DISTANCE_TYPE,
-    bullet_duration: DURATION_TYPE,
-    player_duration: DURATION_TYPE,
-    dodge_duration: TICK_TYPE,
-    bullet_count: BULLET_TYPE,
-    chase_duration: TICK_TYPE,
-    weight_of_bullet_colliding: WEIGHT_TYPE,
-    weight_of_player_colliding: WEIGHT_TYPE,
-    weight_of_chance_to_shoot: WEIGHT_TYPE,
-    weight_of_chance_to_chase: WEIGHT_TYPE
-  }
-  MAX_POPULATION_SIZE = 100
-  MUTATION_RATE = 0.1 # 10% chance of one mutate
-  MUTATION_TYPE = [:add, :substract, :min, :max, :average, :inverse]
-
   attr_reader :chosen_hero, :population, :logger
 
-  def initialize(initial_population = INITIAL_POPULATION, logger:)
+  def initialize(logger:)
     # hash sort by score ascending
-    @population = initial_population.dup
+    @population = Population.new(logger: logger)
     @logger = logger
   end
 
@@ -92,12 +34,11 @@ class Game
       # do nothing
     elsif world.preparing? || world.dead?
       # update population with the score hero gets during their run
-      update_population(world.current_score - current_score)
-      logger.info(score: world.current_score - current_score)
-      @chosen_hero = choose_hero
+      population.update(chosen_hero, world.current_score - current_score)
+      @chosen_hero = population.choose_hero
       @current_score = world.current_score
       logger.info(hero: chosen_hero)
-      logger.info(population: population)
+      logger.info(population: population.population)
       noop(world)
 
     else
@@ -232,80 +173,5 @@ class Game
 
   def valid_angle?(angle)
     angle != nil && angle != Float::NAN
-  end
-
-  def choose_hero(existing_hero = nil)
-    population.reverse_each do |hero, _score|
-      next if hero == existing_hero
-
-      chosen = [hero, nil].sample
-
-      return chosen if chosen
-    end
-
-    return (population.keys - [existing_hero].compact).sample
-  end
-
-  def need_mutation?
-    population.count == 1 || SecureRandom.rand < MUTATION_RATE
-  end
-
-  def update_population(new_score)
-    return if chosen_hero.nil?
-
-    # avoid the case when score is negative due to restart
-    new_score = [new_score, 0].max
-    population[chosen_hero] = (population[chosen_hero] + new_score) / 2.0
-
-    new_hero = need_mutation? ? mutate(chosen_hero) : breed
-
-    while population.count >= MAX_POPULATION_SIZE || !population.include?(new_hero)
-      population.shift
-    end
-
-    population[new_hero] ||= 0
-    @population = population.sort_by { |_hero, score| score }.to_h
-  end
-
-  def mutate(chosen_hero)
-    new_hero = chosen_hero.dup
-    key = chosen_hero.keys.sample
-    mutation_type = MUTATION_TYPE.sample
-
-    new_hero[key] =
-      case mutation_type
-      when :add
-        [new_hero[key] + 1, KEY_TYPE[key][:max]].min
-      when :substract
-        [new_hero[key] - 1, KEY_TYPE[key][:min]].max
-      when :min
-        KEY_TYPE[key][:min]
-      when :max
-        KEY_TYPE[key][:max]
-      when :average
-        (KEY_TYPE[key][:min] + KEY_TYPE[key][:max]) / 2
-      when :inverse
-        [KEY_TYPE[key][:max] - new_hero[key], KEY_TYPE[key][:min]].max
-      else
-        raise "Invalid mutation type: #{mutation_type}"
-      end
-
-    if KEY_TYPE[key] == Float
-      new_hero[key] = new_hero[key].round(1)
-    end
-
-    new_hero
-  end
-
-  def breed
-    husband = choose_hero
-    wife = choose_hero(husband)
-    new_hero = {}
-
-    husband.each do |key, value|
-      new_hero[key] = (value + wife[key]) / 2
-    end
-
-    new_hero
   end
 end

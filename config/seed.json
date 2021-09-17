@@ -1,0 +1,135 @@
+[
+  {
+    "hero": {
+      "considered_radius": 500.0,
+      "shooting_radius": 200.0,
+      "chasing_radius": 500.0,
+      "bullet_dodging_radius": 200.0,
+      "player_dodging_radius": 1848.729296875,
+      "bullet_duration": 2,
+      "player_duration": 2,
+      "dodge_duration": 2,
+      "bullet_count": 2,
+      "chase_duration": 1,
+      "weight_of_bullet_colliding": 10.0,
+      "weight_of_player_colliding": 8.0,
+      "weight_of_chance_to_shoot": 3.0,
+      "weight_of_chance_to_chase": 1.0
+    },
+    "score": 1
+  },
+  {
+    "hero": {
+      "considered_radius": 500.0,
+      "shooting_radius": 200.0,
+      "chasing_radius": 500.0,
+      "bullet_dodging_radius": 200.0,
+      "player_dodging_radius": 1848.7,
+      "bullet_duration": 2,
+      "player_duration": 2,
+      "dodge_duration": 2,
+      "bullet_count": 2,
+      "chase_duration": 1,
+      "weight_of_bullet_colliding": 10.0,
+      "weight_of_player_colliding": 8.0,
+      "weight_of_chance_to_shoot": 3.0,
+      "weight_of_chance_to_chase": 1.0
+    },
+    "score": 1
+  },
+  {
+    "hero": {
+      "considered_radius": 500.0,
+      "shooting_radius": 200.0,
+      "chasing_radius": 500.0,
+      "bullet_dodging_radius": 200.0,
+      "player_dodging_radius": 1849.7,
+      "bullet_duration": 2,
+      "player_duration": 2,
+      "dodge_duration": 2,
+      "bullet_count": 2,
+      "chase_duration": 1,
+      "weight_of_bullet_colliding": 0.0,
+      "weight_of_player_colliding": 8.0,
+      "weight_of_chance_to_shoot": 3.0,
+      "weight_of_chance_to_chase": 1.0
+    },
+    "score": 1
+  },
+  {
+    "hero": {
+      "considered_radius": 500.0,
+      "shooting_radius": 200.0,
+      "chasing_radius": 500.0,
+      "bullet_dodging_radius": 200.0,
+      "player_dodging_radius": 1848.3,
+      "bullet_duration": 2,
+      "player_duration": 2,
+      "dodge_duration": 2,
+      "bullet_count": 2,
+      "chase_duration": 1,
+      "weight_of_bullet_colliding": 10.0,
+      "weight_of_player_colliding": 8.0,
+      "weight_of_chance_to_shoot": 3.0,
+      "weight_of_chance_to_chase": 1.0
+    },
+    "score": 1
+  },
+  {
+    "hero": {
+      "considered_radius": 500.0,
+      "shooting_radius": 200.0,
+      "chasing_radius": 500.0,
+      "bullet_dodging_radius": 200.0,
+      "player_dodging_radius": 1849.7,
+      "bullet_duration": 2,
+      "player_duration": 2,
+      "dodge_duration": 2,
+      "bullet_count": 2,
+      "chase_duration": 1,
+      "weight_of_bullet_colliding": 10.0,
+      "weight_of_player_colliding": 8.0,
+      "weight_of_chance_to_shoot": 3.0,
+      "weight_of_chance_to_chase": 1.0
+    },
+    "score": 1
+  },
+  {
+    "hero": {
+      "considered_radius": 500.0,
+      "shooting_radius": 200.0,
+      "chasing_radius": 500.5,
+      "bullet_dodging_radius": 200.0,
+      "player_dodging_radius": 1849.0,
+      "bullet_duration": 2,
+      "player_duration": 2,
+      "dodge_duration": 2,
+      "bullet_count": 2,
+      "chase_duration": 1,
+      "weight_of_bullet_colliding": 10.0,
+      "weight_of_player_colliding": 8.0,
+      "weight_of_chance_to_shoot": 3.0,
+      "weight_of_chance_to_chase": 1.0
+    },
+    "score": 1
+  },
+  {
+    "hero": {
+      "considered_radius": 500.0,
+      "shooting_radius": 200.0,
+      "chasing_radius": 500.0,
+      "bullet_dodging_radius": 200.0,
+      "player_dodging_radius": 1849.3,
+      "bullet_duration": 2,
+      "player_duration": 2,
+      "dodge_duration": 2,
+      "bullet_count": 2,
+      "chase_duration": 1,
+      "weight_of_bullet_colliding": 10.0,
+      "weight_of_player_colliding": 8.0,
+      "weight_of_chance_to_shoot": 3.0,
+      "weight_of_chance_to_chase": 1.0
+    },
+    "score": 1
+  }
+]
