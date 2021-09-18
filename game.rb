@@ -34,14 +34,18 @@ class Game
       # do nothing
     elsif world.preparing? || world.dead?
       # update population with the score hero gets during their run
-      population.update(chosen_hero, world.current_score - current_score)
-      @chosen_hero = population.choose_hero
-      @current_score = world.current_score
-      logger.info(hero: chosen_hero)
-      logger.info(population: population.population)
+      if world.preparing? || @alive
+        population.update(chosen_hero, world.current_score - current_score)
+        @alive = false
+        @chosen_hero = population.choose_hero
+        @current_score = world.current_score
+        logger.info(hero: chosen_hero)
+        logger.info(population: population.population)
+      end
       noop(world)
 
     else
+      @alive = true
       # Parameters:
       #- Considered Radius
       #- Weight of bullet colliding

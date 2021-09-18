@@ -30,7 +30,7 @@ class World
     @size = Size.new(*data['bounds'])
     @players = parse_players(data['players'])
     @bullets = parse_bullets(data['bullets'])
-    @current_score = data['scoreboard'].fetch(current_player_id.to_s, 0)
+    @current_score = calculate_score(data['scoreboard'])
   end
 
   def bullets_colliding(within: 1)
@@ -105,6 +105,36 @@ class World
   def parse_bullets(bullets)
     bullets.map do |bullet|
       Bullet.new(bullet)
+    end
+  end
+
+  def calculate_score(scoreboard)
+    # sort score by ascending order
+    current_user_score = scoreboard[current_player_id.to_s]
+    return 0 if current_user_score.nil?
+
+    scoreboard = scoreboard.sort_by { |_player_id, score| score }
+    above_competitor_score = nil
+    below_competitor_score = nil
+
+    scoreboard.each do |player_id, score|
+      if score <= current_user_score
+        below_competitor_score = score
+      end
+
+      if above_competitor_score.nil? && current_player_id.to_s != player_id &&
+          score >= current_user_score
+
+        above_competitor_score = score
+      end
+    end
+
+    if above_competitor_score
+      current_user_score - above_competitor_score
+    elsif below_competitor_score
+      current_user_score - below_competitor_score
+    else
+      0
     end
   end
 end

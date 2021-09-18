@@ -2,7 +2,7 @@ require 'oj'
 require_relative 'player'
 
 class Population
-  MAX_POPULATION_SIZE = 100
+  MAX_POPULATION_SIZE = 10
   DISTANCE_TYPE = { type: Float, min: 100.0, max: 2000.0 }
   DURATION_TYPE = { type: Integer, min: 1, max: 5 }
   TICK_TYPE = { type: Integer, min: 1, max: 10 }
@@ -24,7 +24,7 @@ class Population
     weight_of_chance_to_shoot: WEIGHT_TYPE,
     weight_of_chance_to_chase: WEIGHT_TYPE
   }
-  MUTATION_RATE = 0.1 # 10% chance of one mutate
+  MUTATION_RATE = 0.5 # 50% chance of one mutate
   MUTATION_TYPE = [:add, :substract, :min, :max, :average, :inverse]
 
   attr_reader :logger, :population
@@ -47,10 +47,8 @@ class Population
   def update(chosen_hero, new_score)
     return if chosen_hero.nil?
 
-    # avoid the case when score is negative due to restart
-    new_score = [new_score, 0].max
     logger.info(score: new_score)
-    population[chosen_hero] = (population[chosen_hero] + new_score) / 2.0
+    population[chosen_hero] = population[chosen_hero] + new_score
     logger.info(chosen_hero: chosen_hero, hero_score: population[chosen_hero])
 
     new_hero = need_mutation? ? mutate(chosen_hero) : breed
